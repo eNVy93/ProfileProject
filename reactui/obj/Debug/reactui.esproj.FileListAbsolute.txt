@@ -1,0 +1,2 @@
+C:\Users\ITWORK\source\repos\ProfileProjectV2\ReactUI\obj\Debug\reactui.esproj.SuggestedBindingRedirects.cache
+C:\Users\ITWORK\source\repos\ProfileProjectV2\ReactUI\obj\Debug\reactui.esproj.CoreCompileInputs.cache
