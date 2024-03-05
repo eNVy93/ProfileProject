@@ -30,15 +30,13 @@ namespace ProfileProjectV2.Services
         {
             var passwordHash = _passwordService.HashPasword(user.Password, out byte[] salt);
             user.PasswordHash = passwordHash;
-            //TODO do not save plai text password to database
+            //TODO do not save plain text password to database
             user.CreatedAt = DateTime.Now;
             _dbContext.Users.Add(user);
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
             string saltBase64 = Convert.ToBase64String(salt);
             
             _passwordService.InsertPasswordInfo(new UserPasswordInfo(saltBase64, user.Id));
-
-            // jeigu nori async _dbContext.SaveChangesAsync();
         }
 
         // should make async?
@@ -52,7 +50,7 @@ namespace ProfileProjectV2.Services
             }
 
             _dbContext.Users.Remove(existingUser);
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
         }
 
         // should make async?
@@ -79,7 +77,7 @@ namespace ProfileProjectV2.Services
             }
 
             _dbContext.Entry(existingUser).CurrentValues.SetValues(user);
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
         }
 
         public void MarkAsDeleted(User user)
@@ -94,26 +92,25 @@ namespace ProfileProjectV2.Services
             user.IsDeleted = true;
 
             _dbContext.Entry(existingUser).CurrentValues.SetValues(user);
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
         }
 
         public bool LoginUser(User user)
         {
             User existingUser = _dbContext.Users.SingleOrDefault(u => u.Username == user.Username);
 
-            if(existingUser == null)
+            if (existingUser == null)
             {
                 return false;
             }
             UserPasswordInfo passwordInfo = _dbContext.UserPasswordInfo.SingleOrDefault(psw => psw.UserId == existingUser.Id);
 
-            byte[] saltBytes = Convert.FromBase64String(passwordInfo.PasswordSalt);
-            if (passwordInfo == null || !_passwordService.VerifyPassword(user.Password, existingUser.PasswordHash, saltBytes))
+            if (passwordInfo == null || !_passwordService.VerifyPassword(user.Password, existingUser.PasswordHash, Convert.FromBase64String(passwordInfo.PasswordSalt)))
             {
                 return false;
             }
 
-            if(existingUser.UserState == UserState.LoggedIn)
+            if (existingUser.UserState == UserState.LoggedIn)
             {
                 return false;
             }
@@ -121,10 +118,27 @@ namespace ProfileProjectV2.Services
             existingUser.UserState = UserState.LoggedIn;
             _dbContext.Attach(existingUser);
             _dbContext.Entry(existingUser).Property(r => r.UserState).IsModified = true;
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
 
             return true;
-            // jeigu nori async _dbContext.SaveChangesAsync();
+        }
+
+        public bool LogOutUser(User user)
+        {
+            User existingUser = _dbContext.Users.SingleOrDefault(u => u.Username == user.Username);
+
+            if (existingUser == null)
+            {
+                return false;
+            }
+           
+
+            existingUser.UserState = UserState.LoggedOut;
+            _dbContext.Attach(existingUser);
+            _dbContext.Entry(existingUser).Property(r => r.UserState).IsModified = true;
+            _dbContext.SaveChangesAsync();
+
+            return true;
         }
     }
 }

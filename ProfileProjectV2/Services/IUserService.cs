@@ -16,5 +16,6 @@ namespace ProfileProjectV2.Services
         public List<User> GetUsers();
         void MarkAsDeleted(User user);
         bool LoginUser(User user);
+        bool LogOutUser(User user);
     }
 }

@@ -38,6 +38,7 @@ useEffect(() => {
                             <td>{user.userState} </td>
                             <button onClick={(() => deleteUser(user))}>delete</button> 
                             <button onClick={(() => markAsDeleted(user))}>mark deleted</button> 
+                            <button onClick={(() => logout(user))}>Log Out</button> 
                         </tr>
                     )}
                 </tbody>
@@ -89,6 +90,16 @@ useEffect(() => {
 
     async function markAsDeleted(user){
         fetch('https://localhost:7062/api/users/markdeleted', { 
+                method: 'POST', 
+                body: JSON.stringify(user), 
+                headers: { 'Content-Type': 'application/json' }, 
+            })
+            .then(res => res.json())
+            .catch((err) => console.log(err))
+    }
+
+    async function logout(user){
+        fetch('https://localhost:7062/api/users/logout', { 
                 method: 'POST', 
                 body: JSON.stringify(user), 
                 headers: { 'Content-Type': 'application/json' }, 

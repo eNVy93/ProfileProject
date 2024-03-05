@@ -41,7 +41,7 @@ namespace ProfileProjectV2.Services
         public void InsertPasswordInfo(UserPasswordInfo passwordInfo)
         {
             _dbContext.UserPasswordInfo.Add(passwordInfo);
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -55,5 +55,13 @@ namespace ProfileProjectV2.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("logout")]
+        public ActionResult LogoutUser(User user)
+        {
+            _userService.LogOutUser(user);
+            return Ok();
+        }
+
     }
 }

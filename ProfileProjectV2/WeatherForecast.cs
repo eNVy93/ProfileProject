@@ -1,5 +1,6 @@
 namespace ProfileProjectV2
 {
+    // TODO delete
     public class WeatherForecast
     {
         public DateTime Date { get; set; }

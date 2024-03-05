@@ -10,7 +10,7 @@ namespace ProfileProjectV2.Model
     {
         public int Id { get; set; }
         public string Username { get; set; }
-        public string Password { get; set; }
+        public string Password { get; set; } // for passig password input TEMP
         public string PasswordHash { get; set; } // Store hashed passwords
         public int? AvatarId { get; set; } // Foreign key for Avatar
         public DateTime CreatedAt { get; set; }
