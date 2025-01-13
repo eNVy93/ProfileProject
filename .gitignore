@@ -41,3 +41,5 @@ Thumbs.db
 .vs
 *.pdb
 *.sentinel
+/CSVParser/bin/Debug/net6.0
+/CSVParser/obj

@@ -1,6 +1,8 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
 
+import '../App.css'
+
 export default function UserCreate() {
     const [user, setUser] = useState({
         userName: '',
@@ -24,17 +26,6 @@ export default function UserCreate() {
     }
 
     async function handleSubmit(event){
-        // const formData = new FormData(form.current);
-        // if(!formData.get("userName")?.length>3){
-        //     console.warn(`Name length should be more than 3 symbols`);
-        //     return;
-        // }
-        // if(!formData.get("password")?.length>3){
-        //     console.warn(`Password length should be more than 4 symbols`);
-        //     return;
-        // }
-        
-        //event.preventDefault()
         fetch('https://localhost:7062/api/users/create', { 
                 method: 'POST', 
                 body: JSON.stringify(user), 
@@ -47,18 +38,18 @@ export default function UserCreate() {
         
     }
     return (
-    <div>
-      <p>UserCreate</p>
+    <div className="card">
       <form  onSubmit={handleSubmit}>
-        <label>
-        UserName:
+      <p className='title'>Register</p>
+        <div className='input'>
+          <p className='label'>UserName:</p>
           <input type="text" name="userName" value={user.userName} onChange={handleChangeUserName}/>
-        </label>
-        <label>
-        Password:
+        </div>
+        <div className='input'>
+          <p className='label'>Password:</p>
           <input type="password" name="password" value={user.password} onChange={handleChangePassword}/>
-        </label>
         <button type="submit">Create</button>
+        </div>
       </form>
       <p>
         {user.userName}{' '}

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProfileProjectV2.Model
+namespace ProfileProjectV2.Model.User
 {
-    public class User : IEntity
+    public class UserEntity : IEntity
     {
         public int Id { get; set; }
         public string Username { get; set; }

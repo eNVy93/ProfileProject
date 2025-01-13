@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProfileProjectV2.Model;
+using ProfileProjectV2.Model.User;
 using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
@@ -26,62 +27,85 @@ namespace ProfileProjectV2.Services
         // TODO code is not DRY. maybe create a generic method to update database and re-use it.
 
         // should make async?
-        public void CreateUser(User user)
+        public async Task CreateUserAsync(UserEntity user)
         {
-            var passwordHash = _passwordService.HashPasword(user.Password, out byte[] salt);
-            user.PasswordHash = passwordHash;
-            //TODO do not save plain text password to database
-            user.CreatedAt = DateTime.Now;
-            _dbContext.Users.Add(user);
-            _dbContext.SaveChangesAsync();
-            string saltBase64 = Convert.ToBase64String(salt);
-            
-            _passwordService.InsertPasswordInfo(new UserPasswordInfo(saltBase64, user.Id));
-        }
-
-        // should make async?
-        public void DeleteUser(User user)
-        {
-            var existingUser = _dbContext.Users.FirstOrDefault<User>(u => u.Id == user.Id);
-            // good idea for logging?
-            if (existingUser == null)
+            try
             {
-                return;
+                // TODO transaction begin
+                var passwordHash = Task.Run(() => _passwordService.HashPasword(user.Password));
+                user.PasswordHash = passwordHash.Result.Hash;
+                //TODO do not save plain text password to database
+                user.CreatedAt = DateTime.Now;
+                _dbContext.Users.Add(user);
+                _ = await _dbContext.SaveChangesAsync();
+                string saltBase64 = Convert.ToBase64String(passwordHash.Result.Salt);
+
+                await _passwordService.InsertPasswordInfoAsync(new UserPasswordInfo(saltBase64, user.Id));
             }
-
-            _dbContext.Users.Remove(existingUser);
-            _dbContext.SaveChangesAsync();
+            catch
+            {
+                // TODO Do something
+            }
+            // -- Transaction commit
         }
 
         // should make async?
-        public User GetUser(int userId)
+        public async Task DeleteUserAsync(UserEntity user)
         {
-            User user = _dbContext.Users.SingleOrDefault(u => u.Id == userId);
-            return user;
+            try
+            {
+                var existingUser = _dbContext.Users.FirstOrDefaultAsync<UserEntity>(u => u.Id == user.Id);
+                // good idea for logging?
+                if (existingUser == null)
+                {
+                    return;
+                }
+
+                _dbContext.Users.Remove(existingUser.Result);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // TODO do something
+            }
         }
 
         // should make async?
-        public List<User> GetUsers()
+        public async Task<UserEntity> GetUserAsync(int userId) => await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
+
+        // should make async?
+        public List<UserEntity> GetUsers()
         {
             return _dbContext.Users.ToList();
         }
 
         // should make async?
-        public void UpdateUser(User user)
+        public async Task UpdateUserAsync(UserEntity user)
         {
-            var existingUser = _dbContext.Users.FirstOrDefault(u => u.Id == user.Id);
-            // good idea for logging?
-            if (existingUser == null)
+            try
             {
-                return;
-            }
+                // SingleOrDefault returns exception if more records found
+                // Can I reuse GetuserAsync??
+                var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+                // good idea for logging?
+                if (existingUser == null)
+                {
+                    return;
+                }
 
-            _dbContext.Entry(existingUser).CurrentValues.SetValues(user);
-            _dbContext.SaveChangesAsync();
+                _dbContext.Entry(existingUser).CurrentValues.SetValues(user);
+                _ = await _dbContext.SaveChangesAsync();
+            }
+            catch
+            {
+                // TODO
+                // throw?
+            }
         }
 
-        public void MarkAsDeleted(User user)
+        public void MarkAsDeleted(UserEntity user)
         {
+            // using GetUserAsync would implement DRY pattern
             var existingUser = _dbContext.Users.FirstOrDefault(u => u.Id == user.Id);
             // good idea for logging?
             if (existingUser == null)
@@ -95,43 +119,59 @@ namespace ProfileProjectV2.Services
             _dbContext.SaveChangesAsync();
         }
 
-        public bool LoginUser(User user)
+        // TODO should be in separate service?
+        public bool LoginUser(UserEntity user)
         {
-            User existingUser = _dbContext.Users.SingleOrDefault(u => u.Username == user.Username);
-
-            if (existingUser == null)
+            try
             {
+                UserEntity existingUser = _dbContext.Users.SingleOrDefault(u => u.Username == user.Username);
+
+                if (existingUser == null)
+                {
+                    return false;
+                }
+                UserPasswordInfo passwordInfo = _dbContext.UserPasswordInfo.SingleOrDefault(psw => psw.UserId == existingUser.Id);
+
+                if (passwordInfo == null)
+                {
+                    return false;
+                }
+
+                PasswordEntity passwordEntity = new PasswordEntity(existingUser.PasswordHash, Convert.FromBase64String(passwordInfo.PasswordSalt));
+
+                if (!_passwordService.VerifyPassword(user.Password, passwordEntity))
+                {
+                    return false;
+                }
+
+                if (existingUser.UserState == UserState.LoggedIn)
+                {
+                    return false;
+                }
+
+                existingUser.UserState = UserState.LoggedIn;
+                _dbContext.Attach(existingUser);
+                _dbContext.Entry(existingUser).Property(r => r.UserState).IsModified = true;
+                _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch
+            {
+                //TODO
                 return false;
             }
-            UserPasswordInfo passwordInfo = _dbContext.UserPasswordInfo.SingleOrDefault(psw => psw.UserId == existingUser.Id);
-
-            if (passwordInfo == null || !_passwordService.VerifyPassword(user.Password, existingUser.PasswordHash, Convert.FromBase64String(passwordInfo.PasswordSalt)))
-            {
-                return false;
-            }
-
-            if (existingUser.UserState == UserState.LoggedIn)
-            {
-                return false;
-            }
-
-            existingUser.UserState = UserState.LoggedIn;
-            _dbContext.Attach(existingUser);
-            _dbContext.Entry(existingUser).Property(r => r.UserState).IsModified = true;
-            _dbContext.SaveChangesAsync();
-
-            return true;
         }
 
-        public bool LogOutUser(User user)
+        // TODO should be in separate service?
+        public bool LogOutUser(UserEntity user)
         {
-            User existingUser = _dbContext.Users.SingleOrDefault(u => u.Username == user.Username);
+            UserEntity existingUser = _dbContext.Users.SingleOrDefault(u => u.Username == user.Username);
 
             if (existingUser == null)
             {
                 return false;
             }
-           
 
             existingUser.UserState = UserState.LoggedOut;
             _dbContext.Attach(existingUser);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProfileProjectV2.Model.User;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,6 @@ namespace ProfileProjectV2.Model
         public int UserId { get; set; }
 
         // Navigation property
-        public User User { get; set; }
+        public UserEntity User { get; set; }
     }
 }

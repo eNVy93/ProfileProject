@@ -1,4 +1,4 @@
-﻿namespace ProfileProjectV2.Model
+﻿namespace ProfileProjectV2.Model.User
 {
     public enum UserState
     {

@@ -1,4 +1,4 @@
-﻿using ProfileProjectV2.Model;
+﻿using ProfileProjectV2.Model.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +9,13 @@ namespace ProfileProjectV2.Services
 {
     public interface IUserService
     {
-        public void CreateUser(User user);
-        public void UpdateUser(User user);
-        public void DeleteUser(User user);
-        public User GetUser(int userId);
-        public List<User> GetUsers();
-        void MarkAsDeleted(User user);
-        bool LoginUser(User user);
-        bool LogOutUser(User user);
+        public Task CreateUserAsync(UserEntity user);
+        public Task UpdateUserAsync(UserEntity user);
+        public Task DeleteUserAsync(UserEntity user);
+        public Task<UserEntity> GetUserAsync(int userId);
+        public List<UserEntity> GetUsers();
+        void MarkAsDeleted(UserEntity user);
+        bool LoginUser(UserEntity user);
+        bool LogOutUser(UserEntity user);
     }
 }

@@ -1,4 +1,5 @@
 
+using CSVParser;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyModel;
 using ProfileProjectV2;
@@ -10,7 +11,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowLocalhost3000",
         policy => 
         {
-            policy.WithOrigins("http://localhost:3000/")
+            policy.WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .SetIsOriginAllowed(origin => true) // allow any origin
@@ -25,6 +26,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<IBankStatementService<SwedbankStatement>, SwedbankStatementService>();
 //builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();

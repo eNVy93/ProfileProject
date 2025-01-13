@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CSVParser;
+using Microsoft.EntityFrameworkCore;
 using ProfileProjectV2.Model;
+using ProfileProjectV2.Model.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +13,12 @@ namespace ProfileProjectV2
     public class AppDbContext : DbContext
     {
         public string DbPath { get; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
         public DbSet<Avatar> Avatars { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Hobby> Hobbies { get; set; }
         public DbSet<UserPasswordInfo> UserPasswordInfo { get; set; }
+        public DbSet<SwedbankStatement> SwedbankStatements { get; set; }
 
         public AppDbContext()
         {

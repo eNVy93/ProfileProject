@@ -1,11 +1,12 @@
 ﻿using ProfileProjectV2.Model;
+using ProfileProjectV2.Model.User;
 
 namespace ProfileProjectV2.Services
 {
     public interface IPasswordService
     {
-        string HashPasword(string password, out byte[] salt);
-        void InsertPasswordInfo(UserPasswordInfo passwordInfo);
-        bool VerifyPassword(string password, string hash, byte[] salt);
+        PasswordEntity HashPasword(string password);
+        Task InsertPasswordInfoAsync(UserPasswordInfo passwordInfo);
+        bool VerifyPassword(string password, PasswordEntity passwordEntity);
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace ProfileProjectV2.Model
+﻿using ProfileProjectV2.Model.User;
+namespace ProfileProjectV2.Model
 {
     public class Avatar : IEntity
     {
@@ -10,6 +11,6 @@
         public int InteractionCount { get; set; } // Number of times the user has interacted with the avatar
 
         // Navigation property
-        public User User { get; set; }
+        public UserEntity User { get; set; }
     }
 }

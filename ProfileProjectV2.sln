@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProfileProjectV2", "Profile
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "reactui", "ReactUI\reactui.esproj", "{E3D6C625-C0EF-48AB-AFA2-80A5A6739027}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSVParser", "CSVParser\CSVParser.csproj", "{D4338F4C-0BCE-4E8F-B7A3-54F200C94754}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfileProjectV2Test", "ProfileProjectV2Test\ProfileProjectV2Test.csproj", "{D42FBFD3-5CA1-41D2-A118-7874870C5ADB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +27,14 @@ Global
 		{E3D6C625-C0EF-48AB-AFA2-80A5A6739027}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3D6C625-C0EF-48AB-AFA2-80A5A6739027}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E3D6C625-C0EF-48AB-AFA2-80A5A6739027}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{D4338F4C-0BCE-4E8F-B7A3-54F200C94754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4338F4C-0BCE-4E8F-B7A3-54F200C94754}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4338F4C-0BCE-4E8F-B7A3-54F200C94754}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4338F4C-0BCE-4E8F-B7A3-54F200C94754}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D42FBFD3-5CA1-41D2-A118-7874870C5ADB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D42FBFD3-5CA1-41D2-A118-7874870C5ADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D42FBFD3-5CA1-41D2-A118-7874870C5ADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D42FBFD3-5CA1-41D2-A118-7874870C5ADB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

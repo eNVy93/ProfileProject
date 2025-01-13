@@ -24,17 +24,7 @@ export default function UserLogin() {
     }
 
     async function handleSubmit(event){
-        // const formData = new FormData(form.current);
-        // if(!formData.get("userName")?.length>3){
-        //     console.warn(`Name length should be more than 3 symbols`);
-        //     return;
-        // }
-        // if(!formData.get("password")?.length>3){
-        //     console.warn(`Password length should be more than 4 symbols`);
-        //     return;
-        // }
-        
-        //event.preventDefault()
+
         fetch('https://localhost:7062/api/users/login', { 
                 method: 'POST', 
                 body: JSON.stringify(user), 
@@ -47,18 +37,18 @@ export default function UserLogin() {
         
     }
     return (
-    <div>
-      <p>LogIn</p>
+    <div className='card'>
+      <p className='title'>LogIn</p>
       <form  onSubmit={handleSubmit}>
-        <label>
-        UserName:
+        <div className='input'>
+          <p className='label'>UserName:</p>
           <input type="text" name="userName" value={user.userName} onChange={handleChangeUserName}/>
-        </label>
-        <label>
-        Password:
+        </div>
+        <div className='input'>
+          <p className='label'>Password:</p>
           <input type="password" name="password" value={user.password} onChange={handleChangePassword}/>
-        </label>
-        <button type="submit">Log In</button>
+          <button type="submit">Log In</button>
+        </div>
       </form>
       <p>
         {user.userName}{' '}

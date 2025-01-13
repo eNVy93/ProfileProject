@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProfileProjectV2.Model;
+using ProfileProjectV2.Model.User;
 using ProfileProjectV2.Services;
 
 namespace ProfileProjectV2.Controllers
@@ -19,37 +19,37 @@ namespace ProfileProjectV2.Controllers
         // GET: api/users
         [HttpGet]
         [Route("all")]
-        public ActionResult<IEnumerable<User>> GetUsers() {
+        public ActionResult<IEnumerable<UserEntity>> GetUsers() {
 
             return Ok(_userService.GetUsers());
         }
 
         [HttpPost]
         [Route("create")]
-        public ActionResult CreateUser(User user)
+        public ActionResult CreateUser(UserEntity user)
         {
-            _userService.CreateUser(user);
-            return Ok();
+            _userService.CreateUserAsync(user);
+            return Created("create", user);
         }
 
         [HttpPost]
         [Route("delete")]
-        public ActionResult DeleteUser(User user)
+        public ActionResult DeleteUser(UserEntity user)
         {
-            _userService.DeleteUser(user);
+            _userService.DeleteUserAsync(user);
             return Ok();
         }
 
         [HttpPost]
         [Route("markdeleted")]
-        public ActionResult MarkAsDeleted(User user)
+        public ActionResult MarkAsDeleted(UserEntity user)
         {
             _userService.MarkAsDeleted(user);
             return Ok();
         }
         [HttpPost]
         [Route("login")]
-        public ActionResult LoginUser(User user)
+        public ActionResult LoginUser(UserEntity user)
         {
             _userService.LoginUser(user);
             return Ok();
@@ -57,7 +57,7 @@ namespace ProfileProjectV2.Controllers
 
         [HttpPost]
         [Route("logout")]
-        public ActionResult LogoutUser(User user)
+        public ActionResult LogoutUser(UserEntity user)
         {
             _userService.LogOutUser(user);
             return Ok();

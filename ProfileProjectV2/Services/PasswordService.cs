@@ -1,4 +1,5 @@
 ﻿using ProfileProjectV2.Model;
+using ProfileProjectV2.Model.User;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -19,29 +20,30 @@ namespace ProfileProjectV2.Services
 
         public AppDbContext _dbContext { get; set; }
 
-        public string HashPasword(string password, out byte[] salt)
+        public PasswordEntity HashPasword(string password)
         {
-            salt = RandomNumberGenerator.GetBytes(KeySize);
+            // todo trycatch?
+            var salt = RandomNumberGenerator.GetBytes(KeySize);
             var hash = Rfc2898DeriveBytes.Pbkdf2(
                 Encoding.UTF8.GetBytes(password),
                 salt,
                 Iterations,
                 HashAlgorithm,
                 KeySize);
-            return Convert.ToHexString(hash);
+            return new PasswordEntity(Convert.ToHexString(hash), salt);
         }
-        public bool VerifyPassword(string password, string hash, byte[] salt)
+        public bool VerifyPassword(string password, PasswordEntity passwordEntity)
         {
-            var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, HashAlgorithm, KeySize);
-            return CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(hash));
+            var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, passwordEntity.Salt, Iterations, HashAlgorithm, KeySize);
+            return CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(passwordEntity.Hash));
         }
 
         // TODO Async
         // TODO improve, error handling and etc
-        public void InsertPasswordInfo(UserPasswordInfo passwordInfo)
+        public async Task InsertPasswordInfoAsync(UserPasswordInfo passwordInfo)
         {
             _dbContext.UserPasswordInfo.Add(passwordInfo);
-            _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
